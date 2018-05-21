@@ -331,4 +331,5 @@ if __name__ == "__main__":
     test_normalize('비대위원장이 지난 1월 이런 말을 했습니다. “난 그냥 산돼지처럼 돌파하는 스타일이다”')
     test_normalize("지금은 -12.35%였고 종류는 5가지와 19가지, 그리고 55가지였다")
     test_normalize("JTBC는 TH와 K 양이 2017년 9월 12일 오후 12시에 24살이 된다")
-    test_normalize("11월 11일")
+    # sentence tokenizing is not a part of this task
+    test_normalize("11월 11일에는 빼빼로를 먹는다. 5월 8일에는 부모님께 카네이션을 달아드린다.")
