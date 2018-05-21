@@ -5,7 +5,8 @@ import os
 import ast
 import json
 from jamo import hangul_to_jamo, h2j, j2h
-
+import nltk
+nltk.download('punkt')
 from ko_dictionary import english_dictionary, etc_dictionary
 
 PAD = '_'
@@ -330,3 +331,4 @@ if __name__ == "__main__":
     test_normalize('비대위원장이 지난 1월 이런 말을 했습니다. “난 그냥 산돼지처럼 돌파하는 스타일이다”')
     test_normalize("지금은 -12.35%였고 종류는 5가지와 19가지, 그리고 55가지였다")
     test_normalize("JTBC는 TH와 K 양이 2017년 9월 12일 오후 12시에 24살이 된다")
+    test_normalize("11월 11일")
