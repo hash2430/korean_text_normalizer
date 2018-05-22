@@ -1,10 +1,8 @@
 # Code based on 
 
 import re
-import os
 import ast
-import json
-from jamo import hangul_to_jamo, h2j, j2h
+from jamo import hangul_to_jamo
 # import nltk
 # nltk.download('punkt')
 from ko_dictionary import english_dictionary, etc_dictionary
