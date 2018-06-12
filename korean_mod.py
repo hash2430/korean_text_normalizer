@@ -1,11 +1,11 @@
-# Code based on 
-
+#-*- coding: utf-8 -*-
 import re
 import ast
 from jamo import hangul_to_jamo
 # import nltk
 # nltk.download('punkt')
 from ko_dictionary import english_dictionary, etc_dictionary
+from DictionaryMissException import DictionaryMissException
 
 PAD = '_'
 EOS = '~'
@@ -144,15 +144,21 @@ def tokenizer_fn(iterator):
     return (token for x in iterator for token in tokenize(x, as_id=False))
 
 def normalize(text):
-    text = text.strip()
-    text = re.sub('\(\d+일\)', '', text)
-    text = re.sub('\([⺀-⺙⺛-⻳⼀-⿕々〇〡-〩〸-〺〻㐀-䶵一-鿃豈-鶴侮-頻並-龎]+\)', '', text)
-    text = normalize_with_dictionary(text, etc_dictionary)
+    print(text)
+    text = text.strip() #문자열 양쪽에 있는 한 칸 이상의 연속된 공백들을 모두 지운다.
+    #text = normalize_with_dictionary(text, etc_dictionary)
     text = normalize_english(text)
     text = re.sub('[a-zA-Z]+', normalize_upper, text)
-    text = normalize_quote(text)
+    #text = normalize_quote(text)
     text = normalize_number(text)
+    if include_alphabet(text) != None:
+        raise DictionaryMissException(text)
     return text
+
+def include_alphabet(text):
+    result = False
+    result = re.match('[a-zA-Z]+', text)
+    return result
 
 def normalize_with_dictionary(text, dic):
     if any(key in text for key in dic.keys()):
@@ -190,7 +196,7 @@ def normalize_quote(text):
 number_checker = "([+-]?\d[\d,]*)[\.]?\d*"
 noncount_checker = "(개월|달러|달라)"
 count_checker = "(시|명|가지|살|마리|포기|송이|수|톨|통|개|벌|척|채|다발|그루|자루|줄|켤레|그릇|잔|마디|상자|사람|곡|병|판|군데|곳|달)"
-
+## count/nocount checker가 뒤에 어펜드 된 형태로 된 매칭을 왜 하는지 모르겠다. 어차피 한글 유닛은 그대로 둘건데 찾아서 바꿀 내용이 있는 것도 아니고. 그냥 숫자만 매칭해보게 해도 될 것 같다.
 def normalize_number(text):
     text = normalize_with_dictionary(text, unit_to_kor1)
     text = normalize_with_dictionary(text, unit_to_kor2)
@@ -265,12 +271,12 @@ def number_to_korean(num_str, is_count=False):
     if is_count and float_str is not None:
         raise Exception(" [!] `is_count` and float number does not fit each other")
     digit = int(digit_str)
-    if digit_str.startswith("-") or digit_str.startswith("+"):
+    if digit_str.startswith("-") or digit_str.startswith("+"): # remove sign even if it is negative
         digit, digit_str = abs(digit), str(abs(digit))
     kor = ""
     size = len(str(digit))
     tmp = []
-    for i, v in enumerate(digit_str, start=1):
+    for i, v in enumerate(digit_str, start=1): #i: indx, v: value
         v = int(v)
         # if i < size:
             # if (v != 0 and v != 1):
@@ -286,7 +292,7 @@ def number_to_korean(num_str, is_count=False):
                 tmp += count_to_kor1[v]
             else:
                 tmp += num_to_kor1[v]
-            tmp += num_to_kor3[(size - i) % 4]
+            tmp += num_to_kor3[(size - i) % 4] #만 단위로 끊는다
         if (size - i) % 4 == 0 and len(tmp) != 0:
             kor += "".join(tmp)
             tmp = []
@@ -299,7 +305,7 @@ def number_to_korean(num_str, is_count=False):
                     '|'.join(count_tenth_dict.keys()),
                     lambda x: count_tenth_dict[x.group()], kor)
     if not is_count:
-        if kor.startswith("일") and len(kor) > 1:
+        if kor.startswith("일") and len(kor) > 1:# 맨 처음의 1은 읽지 않는다
             kor = kor[1:]
         if any(word in kor for word in noncount_tenth_dict):
             kor = re.sub(
@@ -323,11 +329,12 @@ if __name__ == "__main__":
         print(text)
         print(normalize(text))
         print("="*30)
-    test_normalize("JTBC는 JTBCs를 DY는 A가 Absolute")
-    test_normalize("오늘(13일) 101마리 강아지가")
     test_normalize('"저돌"(猪突) 입니다.')
+    test_normalize("   JTBC는 JTBCs를 DY는 A가 Absolute   ")
+    test_normalize("+10+1월 11일에는 빼빼로를 먹는다. 5월 8일에는 부모님께 카네이션을 달아드린다.")
+    test_normalize("오늘(13일) 101마리 강아지가")
     test_normalize('비대위원장이 지난 1월 이런 말을 했습니다. “난 그냥 산돼지처럼 돌파하는 스타일이다”')
     test_normalize("지금은 -12.35%였고 종류는 5가지와 19가지, 그리고 55가지였다")
     test_normalize("JTBC는 TH와 K 양이 2017년 9월 12일 오후 12시에 24살이 된다")
     # sentence tokenizing is not a part of this task
-    test_normalize("11월 11일에는 빼빼로를 먹는다. 5월 8일에는 부모님께 카네이션을 달아드린다.")
+
