@@ -10,7 +10,7 @@ main(int argc, char *argv[])
     const char* s = 0;
 
     Py_Initialize();
-    pName = PyUnicode_DecodeFSDefault("korean_mod");
+    pName = PyUnicode_DecodeFSDefault("korean");
     /* Error checking of pName left out */
 
     pModule = PyImport_Import(pName);
@@ -23,7 +23,7 @@ main(int argc, char *argv[])
         if (pFunc && PyCallable_Check(pFunc)) {
             pArgs = PyTuple_New(1);
             for (i = 0; i < 1; ++i) {
-                pValue = PyUnicode_FromString("11월 11일에 만납시다. \'마구니\'가 꼈구나golden retriever . 100m 밖에서도 잘 보여");
+                pValue = PyUnicode_FromString("11월 11일에 만납시다. \'마구니\'가 꼈구나golden retriever . 100m 밖에서도 잘 보여. Huge absence");
                 if (!pValue) {
                     Py_DECREF(pArgs);
                     Py_DECREF(pModule);
