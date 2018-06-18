@@ -144,15 +144,14 @@ def tokenizer_fn(iterator):
     return (token for x in iterator for token in tokenize(x, as_id=False))
 
 def normalize(text):
-    print(text)
     text = text.strip() #문자열 양쪽에 있는 한 칸 이상의 연속된 공백들을 모두 지운다.
     #text = normalize_with_dictionary(text, etc_dictionary)
     text = normalize_english(text)
     text = re.sub('[a-zA-Z]+', normalize_upper, text)
     #text = normalize_quote(text)
     text = normalize_number(text)
-    if include_alphabet(text) != None:
-        raise DictionaryMissException(text)
+    # if include_alphabet(text) != None:
+    #     raise DictionaryMissException(text)
     return text
 
 def include_alphabet(text):
@@ -179,10 +178,12 @@ def normalize_english(text):
 
 def normalize_upper(text):
     text = text.group(0)
-    if all([char.isupper() for char in text]):
-        return "".join(upper_to_kor[char] for char in text)
-    else:
-        return text
+    # if all([char.isupper() for char in text]):
+    #     return "".join(upper_to_kor[char] for char in text)
+    # else:
+    #     return text
+    text = text.upper()
+    return "".join(upper_to_kor[char] for char in text)
 
 def normalize_quote(text):
     def fn(found_text):
@@ -329,6 +330,7 @@ if __name__ == "__main__":
         print(text)
         print(normalize(text))
         print("="*30)
+    test_normalize("There goes a beautiful golden retriever.")
     test_normalize('"저돌"(猪突) 입니다.')
     test_normalize("   JTBC는 JTBCs를 DY는 A가 Absolute   ")
     test_normalize("+10+1월 11일에는 빼빼로를 먹는다. 5월 8일에는 부모님께 카네이션을 달아드린다.")
