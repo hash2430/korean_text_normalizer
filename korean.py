@@ -146,10 +146,10 @@ def tokenizer_fn(iterator):
 def normalize(text):
     text = text.strip() #문자열 양쪽에 있는 한 칸 이상의 연속된 공백들을 모두 지운다.
     #text = normalize_with_dictionary(text, etc_dictionary)
+    text = normalize_number(text)
     text = normalize_english(text)
     text = re.sub('[a-zA-Z]+', normalize_upper, text)
     #text = normalize_quote(text)
-    text = normalize_number(text)
     # if include_alphabet(text) != None:
     #     raise DictionaryMissException(text)
     return text
