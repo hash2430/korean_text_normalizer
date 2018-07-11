@@ -200,6 +200,7 @@ noncount_checker = "(개월|달러|달라)"
 count_checker = "(시|명|가지|살|마리|포기|송이|수|톨|통|개|벌|척|채|다발|그루|자루|줄|켤레|그릇|잔|마디|상자|사람|곡|병|판|군데|곳|달)"
 ## count/nocount checker가 뒤에 어펜드 된 형태로 된 매칭을 왜 하는지 모르겠다. 어차피 한글 유닛은 그대로 둘건데 찾아서 바꿀 내용이 있는 것도 아니고. 그냥 숫자만 매칭해보게 해도 될 것 같다.
 def normalize_number(text):
+    text = normalize_with_dictionary(text, etc_dictionary)
     text = normalize_with_dictionary(text, unit_to_kor1)
     text = normalize_with_dictionary(text, unit_to_kor2)
     text = re.sub(number_checker + noncount_checker,
