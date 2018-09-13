@@ -4,7 +4,7 @@ import ast
 from jamo import hangul_to_jamo
 # import nltk
 # nltk.download('punkt')
-from ko_dictionary import english_dictionary, etc_dictionary
+from ko_dictionary import english_dictionary, etc_dictionary, eng_unit_dictionary, other_unit_dictionary
 from DictionaryMissException import DictionaryMissException
 
 PAD = '_'
@@ -145,7 +145,7 @@ def tokenizer_fn(iterator):
 
 def normalize(text):
     text = text.strip() #문자열 양쪽에 있는 한 칸 이상의 연속된 공백들을 모두 지운다.
-    #text = normalize_with_dictionary(text, etc_dictionary)
+    text = normalize_unit(text)
     text = normalize_number(text)
     text = normalize_english(text)
     text = re.sub('[a-zA-Z]+', normalize_upper, text)
@@ -195,14 +195,28 @@ def normalize_quote(text):
         return " ".join(["'{}'".format(sent) for sent in sentences])
     return re.sub(quote_checker, fn, text)
 
+'''
+숫자 뒤에 unit 토큰이 오면 숫자는 냅두고 unit 토큰만 normalize한다.
+이렇게 하는 이유는 'm'같은 토큰의 경우 
+alphabet normalize를 number normalize보다 먼저하면 m을 미터로 읽을 방법이 없고
+number normalize를 먼저하고 이 때 알파벳 unit을 normalize를 해버리면 문자열에 필요한 m이었어도 미터로 읽어버린다.
+'''
+eng_unit_checker = "[ ]?(cm|mm|m|km|g|kg|Hz|KHz|GHz)"
+other_unit_checker = "[ ]?(%|℃|㎓)"
 number_checker = "([+-]?\d[\d,]*)[\.]?\d*"
+def normalize_unit(text):
+    text = re.sub(number_checker + eng_unit_checker,
+                  lambda x:unit_to_korean(x, True), text)
+    text = re.sub(number_checker + other_unit_checker,
+                  lambda x:unit_to_korean(x, False), text)
+    return text
+
+
+
 noncount_checker = "(개월|달러|달라)"
 count_checker = "(시|명|가지|살|마리|포기|송이|수|톨|통|개|벌|척|채|다발|그루|자루|줄|켤레|그릇|잔|마디|상자|사람|곡|병|판|군데|곳|달)"
-## count/nocount checker가 뒤에 어펜드 된 형태로 된 매칭을 왜 하는지 모르겠다. 어차피 한글 유닛은 그대로 둘건데 찾아서 바꿀 내용이 있는 것도 아니고. 그냥 숫자만 매칭해보게 해도 될 것 같다.
 def normalize_number(text):
     text = normalize_with_dictionary(text, etc_dictionary)
-    text = normalize_with_dictionary(text, unit_to_kor1)
-    text = normalize_with_dictionary(text, unit_to_kor2)
     text = re.sub(number_checker + noncount_checker,
             lambda x: number_to_korean(x, True), text)
     text = re.sub(number_checker + count_checker,
@@ -254,6 +268,14 @@ noncount_tenth_dict = {
         "일백": "백",
         "일천": "천",
 }
+def unit_to_korean(str, is_eng=False):
+    num_str, unit_str = str.group(1), str.group(2)
+    if is_eng:
+        kor_unit_str = eng_unit_dictionary[unit_str]
+    else:
+        kor_unit_str = other_unit_dictionary[unit_str]
+    return num_str + kor_unit_str
+
 
 def number_to_korean(num_str, is_count=False):
     if is_count:
@@ -326,3 +348,13 @@ def number_to_korean(num_str, is_count=False):
     elif num_str.startswith("-"):
         kor = "마이너스 " + kor
     return kor + unit_str
+
+if __name__ == '__main__':
+    txt1 = '300m'
+    txt2 = '300 m'
+    txt3 = 'my mom'
+    txt4 = '300 %'
+    print(normalize(txt1))
+    print(normalize(txt2))
+    print(normalize(txt3))
+    print(normalize(txt4))
