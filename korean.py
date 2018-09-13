@@ -5,7 +5,7 @@ from jamo import hangul_to_jamo
 # import nltk
 # nltk.download('punkt')
 from ko_dictionary import *
-from checker import *
+from patterns import *
 from constant import *
 from normalization_rules import *
 from DictionaryMissException import DictionaryMissException
@@ -126,7 +126,7 @@ def normalize_quote(text):
         unquoted_text = found_text[1:-1]
         sentences = sent_tokenize(unquoted_text)
         return " ".join(["'{}'".format(sent) for sent in sentences])
-    return re.sub(quote_checker, fn, text)
+    return re.sub(quote_pattern, fn, text)
 
 '''
 숫자 뒤에 unit 토큰이 오면 숫자는 냅두고 unit 토큰만 normalize한다.
@@ -136,9 +136,9 @@ number normalize를 먼저하고 이 때 알파벳 unit을 normalize를 해버�
 '''
 
 def normalize_unit(text):
-    text = re.sub(number_checker + eng_unit_checker,
+    text = re.sub(number_pattern + eng_unit_pattern,
                   lambda x:unit_to_korean(x, True), text)
-    text = re.sub(number_checker + other_unit_checker,
+    text = re.sub(number_pattern + other_unit_pattern,
                   lambda x:unit_to_korean(x, False), text)
     return text
 
@@ -146,10 +146,10 @@ def normalize_unit(text):
 
 def normalize_number(text):
     text = normalize_with_dictionary(text, etc_dictionary)
-    text = re.sub(number_checker + noncount_checker,
-            lambda x: number_to_korean(x, True), text)
-    text = re.sub(number_checker + count_checker,
-            lambda x: number_to_korean(x, True), text)
-    text = re.sub(number_checker,
-            lambda x: number_to_korean(x, False), text)
+    text = re.sub(number_pattern + noncount_pattern,
+                  lambda x: number_to_korean(x, True), text)
+    text = re.sub(number_pattern + count_pattern,
+                  lambda x: number_to_korean(x, True), text)
+    text = re.sub(number_pattern,
+                  lambda x: number_to_korean(x, False), text)
     return text
