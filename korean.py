@@ -4,25 +4,11 @@ import ast
 from jamo import hangul_to_jamo
 # import nltk
 # nltk.download('punkt')
-from ko_dictionary import english_dictionary, etc_dictionary, eng_unit_dictionary, other_unit_dictionary
+from ko_dictionary import *
+from checker import *
+from constant import *
+from normalization_rules import *
 from DictionaryMissException import DictionaryMissException
-
-PAD = '_'
-EOS = '~'
-PUNC = '!\'(),-.:;?'
-SPACE = ' '
-
-JAMO_LEADS = "".join([chr(_) for _ in range(0x1100, 0x1113)])
-JAMO_VOWELS = "".join([chr(_) for _ in range(0x1161, 0x1176)])
-JAMO_TAILS = "".join([chr(_) for _ in range(0x11A8, 0x11C3)])
-
-VALID_CHARS = JAMO_LEADS + JAMO_VOWELS + JAMO_TAILS + PUNC + SPACE
-ALL_SYMBOLS = PAD + EOS + VALID_CHARS
-
-char_to_id = {c: i for i, c in enumerate(ALL_SYMBOLS)}
-id_to_char = {i: c for i, c in enumerate(ALL_SYMBOLS)}
-
-quote_checker = """([`"'＂“‘])(.+?)([`"'＂”’])"""
 
 def is_lead(char):
     return char in JAMO_LEADS
@@ -74,60 +60,7 @@ def jamo_to_korean(text):
         idx += 1
     return new_text
 
-num_to_kor = {
-        '0': '영',
-        '1': '일',
-        '2': '이',
-        '3': '삼',
-        '4': '사',
-        '5': '오',
-        '6': '육',
-        '7': '칠',
-        '8': '팔',
-        '9': '구',
-}
 
-unit_to_kor1 = {
-        '%': '퍼센트',
-        'cm': '센치미터',
-        'mm': '밀리미터',
-        'km': '킬로미터',
-        'kg': '킬로그람',
-        '℃': '도씨',
-        '㎓': '기가헤르츠',
-}
-unit_to_kor2 = {
-        'm': '미터',
-}
-
-upper_to_kor = {
-        'A': '에이',
-        'B': '비',
-        'C': '씨',
-        'D': '디',
-        'E': '이',
-        'F': '에프',
-        'G': '지',
-        'H': '에이치',
-        'I': '아이',
-        'J': '제이',
-        'K': '케이',
-        'L': '엘',
-        'M': '엠',
-        'N': '엔',
-        'O': '오',
-        'P': '피',
-        'Q': '큐',
-        'R': '알',
-        'S': '에스',
-        'T': '티',
-        'U': '유',
-        'V': '브이',
-        'W': '더블유',
-        'X': '엑스',
-        'Y': '와이',
-        'Z': '지',
-}
 
 def compare_sentence_with_jamo(text1, text2):
     return h2j(text1) != h2j(text)
@@ -201,9 +134,7 @@ def normalize_quote(text):
 alphabet normalize를 number normalize보다 먼저하면 m을 미터로 읽을 방법이 없고
 number normalize를 먼저하고 이 때 알파벳 unit을 normalize를 해버리면 문자열에 필요한 m이었어도 미터로 읽어버린다.
 '''
-eng_unit_checker = "[ ]?(cm|mm|m|km|g|kg|Hz|KHz|GHz)"
-other_unit_checker = "[ ]?(%|℃|㎓)"
-number_checker = "([+-]?\d[\d,]*)[\.]?\d*"
+
 def normalize_unit(text):
     text = re.sub(number_checker + eng_unit_checker,
                   lambda x:unit_to_korean(x, True), text)
@@ -213,8 +144,6 @@ def normalize_unit(text):
 
 
 
-noncount_checker = "(개월|달러|달라)"
-count_checker = "(시|명|가지|살|마리|포기|송이|수|톨|통|개|벌|척|채|다발|그루|자루|줄|켤레|그릇|잔|마디|상자|사람|곡|병|판|군데|곳|달)"
 def normalize_number(text):
     text = normalize_with_dictionary(text, etc_dictionary)
     text = re.sub(number_checker + noncount_checker,
@@ -224,137 +153,3 @@ def normalize_number(text):
     text = re.sub(number_checker,
             lambda x: number_to_korean(x, False), text)
     return text
-
-num_to_kor1 = [""] + list("일이삼사오육칠팔구")
-num_to_kor2 = [""] + list("만억조경해")
-num_to_kor3 = [""] + list("십백천")
-
-#count_to_kor1 = [""] + ["하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉"]
-count_to_kor1 = [""] + ["한","두","세","네","다섯","여섯","일곱","여덟","아홉"]
-
-count_tenth_dict = {
-        "한십": "열",
-        "십": "열",
-        "두십": "스물",
-        "세십": "서른",
-        "네십": "마흔",
-        "다섯십": "쉰",
-        "여섯십": "예순",
-        "일곱십": "일흔",
-        "여덟십": "여든",
-        "아홉십": "아흔",  # 아래서부터는 추가
-        "한백": "백",
-        "두백": "이백",
-        "세백": "삼백",
-        "네백": "사백",
-        "다섯백": "오백",
-        "여섯백": "육백",
-        "일곱백": "칠백",
-        "여덟백": "팔백",
-        "아홉백": "구백",
-        "한천": "천",
-        "두천": "이천",
-        "세천": "삼천",
-        "네천": "사천",
-        "다섯천": "오천",
-        "여섯천": "육천",
-        "일곱천": "칠천",
-        "여덟천": "팔천",
-        "아홉천": "구천",
-}
-
-noncount_tenth_dict = {
-        "일십": "십",
-        "일백": "백",
-        "일천": "천",
-}
-def unit_to_korean(str, is_eng=False):
-    num_str, unit_str = str.group(1), str.group(2)
-    if is_eng:
-        kor_unit_str = eng_unit_dictionary[unit_str]
-    else:
-        kor_unit_str = other_unit_dictionary[unit_str]
-    return num_str + kor_unit_str
-
-
-def number_to_korean(num_str, is_count=False):
-    if is_count:
-        num_str, unit_str = num_str.group(1), num_str.group(2)
-    else:
-        num_str, unit_str = num_str.group(), ""
-    num_str = num_str.replace(',', '')
-    num = ast.literal_eval(num_str)
-    if num == 0:
-        return "영"
-    check_float = num_str.split('.')
-    if len(check_float) == 2:
-        digit_str, float_str = check_float
-    elif len(check_float) >= 3:
-        raise Exception(" [!] Wrong number format")
-    else:
-        digit_str, float_str = check_float[0], None
-    if is_count and float_str is not None:
-        raise Exception(" [!] `is_count` and float number does not fit each other")
-    digit = int(digit_str)
-    if digit_str.startswith("-") or digit_str.startswith("+"): # remove sign even if it is negative
-        digit, digit_str = abs(digit), str(abs(digit))
-    kor = ""
-    size = len(str(digit))
-    tmp = []
-    for i, v in enumerate(digit_str, start=1): #i: indx, v: value
-        v = int(v)
-        # if i < size:
-            # if (v != 0 and v != 1):
-                # if is_count:
-                    # tmp += count_to_kor1[v]
-                # else:
-                    # tmp += num_to_kor1[v]
-            # if v != 0:
-                # tmp += num_to_kor3[(size - i) % 4]
-        # else:
-        if v != 0:
-            if is_count:
-                tmp += count_to_kor1[v]
-            else:
-                tmp += num_to_kor1[v]
-            tmp += num_to_kor3[(size - i) % 4] #만 단위로 끊는다
-        if (size - i) % 4 == 0 and len(tmp) != 0:
-            kor += "".join(tmp)
-            tmp = []
-            kor += num_to_kor2[int((size - i) / 4)]
-    if is_count:
-        if kor.startswith("한") and len(kor) > 1:
-            kor = kor[1:]
-        if any(word in kor for word in count_tenth_dict):
-            kor = re.sub(
-                    '|'.join(count_tenth_dict.keys()),
-                    lambda x: count_tenth_dict[x.group()], kor)
-    if not is_count:
-        if kor.startswith("일") and len(kor) > 1:# 맨 처음의 1은 읽지 않는다
-            kor = kor[1:]
-        if any(word in kor for word in noncount_tenth_dict):
-            kor = re.sub(
-                    '|'.join(noncount_tenth_dict.keys()),
-                    lambda x: noncount_tenth_dict[x.group()], kor)
-    #if not is_count and kor.startswith("일") and len(kor) > 1:
-    #    kor = kor[1:]
-    if float_str is not None:
-        if len(kor) == 0:
-            kor += "영"
-        kor += "쩜 "
-        kor += re.sub('\d', lambda x: num_to_kor[x.group()], float_str)
-    if num_str.startswith("+"):
-        kor = "플러스 " + kor
-    elif num_str.startswith("-"):
-        kor = "마이너스 " + kor
-    return kor + unit_str
-
-if __name__ == '__main__':
-    txt1 = '300m'
-    txt2 = '300 m'
-    txt3 = 'my mom'
-    txt4 = '300 %'
-    print(normalize(txt1))
-    print(normalize(txt2))
-    print(normalize(txt3))
-    print(normalize(txt4))
