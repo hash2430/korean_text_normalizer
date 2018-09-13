@@ -1,4 +1,5 @@
-# compile and link
+# This code is modified from original work by https://github.com/carpedm20/multi-speaker-tacotron-tensorflow/tree/master/text
+# how to compile and link for using C-Python interface for C programs
 1. Create a python3.6 environment 
 2. Configure the python src path in c_wrapper.c 
     ex) setenv("PYTHONPATH","/home/administrator/projects/txt_norm",1);
