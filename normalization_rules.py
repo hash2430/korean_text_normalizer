@@ -3,6 +3,7 @@ from constant import *
 import ast
 import re
 
+# 패턴 매치가 일어난 후에 매치된 부위를 한글로 치환하는 함수를 모아둔 모듈
 def unit_to_korean(str, is_eng=False):
     num_str, unit_str = str.group(1), str.group(2)
     if is_eng:
@@ -74,3 +75,7 @@ def number_to_korean(num_str, is_count=False):
     elif num_str.startswith("-"):
         kor = "마이너스 " + kor
     return kor + unit_str
+
+def alphabet_to_korean(str):
+    text = str.group(0)
+    return "".join(upper_to_kor[char] for char in text)
