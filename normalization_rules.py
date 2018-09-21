@@ -14,10 +14,12 @@ def unit_to_korean(str, is_eng=False):
 
 
 def number_to_korean(num_str, is_count=False):
-    if is_count:
-        num_str, unit_str = num_str.group(1), num_str.group(2)
-    else:
+    group_size = len(num_str.groups())
+    if group_size == 1:
         num_str, unit_str = num_str.group(), ""
+    elif group_size == 2:
+        num_str, unit_str = num_str.group(1), num_str.group(2)
+
     num_str = num_str.replace(',', '')
     num = ast.literal_eval(num_str)
     if num == 0:
