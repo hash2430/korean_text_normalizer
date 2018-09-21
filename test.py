@@ -20,3 +20,4 @@ print(normalize('중국 정부도 ‘중국 제조 2025(Made in China 2025)‘ �
 print(normalize('영국의 파이낸셜타임스(FT)는 종종 한 면을 털어 심층분석 기사 FT 빅리드(FT BIG READ)를 싣는다.'))
 print(normalize('르펜은 2015년 12월 FN을 IS에 빗대 비판한 방송사 기자에게 IS의 잔혹행위 사진을 보냈다.'))
 print(normalize('SD의 득표율은 2014년 총선 12.9%보다 5%포인트 가까이 올랐다.'))
+print(normalize('우크라이나 경찰은 전날 그가 키예프의 자신의 아파트 입구에서 야구모자를 쓴 40대 괴한의 총에 맞아 병원으로 이송되던 도중 숨졌다고 발표했었다.'))
