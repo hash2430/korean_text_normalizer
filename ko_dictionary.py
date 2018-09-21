@@ -111,7 +111,10 @@ english_dictionary = {
     'MY': '마이',
     'CAPTAIN': '캡틴',
     'IPHONE': '아이폰',
-    'COPYRIGHT': '카피라이트'
+    'COPYRIGHT': '카피라이트',
+    'MADE': '메이드',
+    'IN': '인',
+    'CHINA': '차이나'
 }
 
 eng_unit_dictionary = {
@@ -129,6 +132,7 @@ eng_unit_dictionary = {
 other_unit_dictionary = {
     '%': '퍼센트',
     '℃': '도씨',
-    '㎓': '기가헤르츠'
+    '㎓': '기가헤르츠',
+    '㎡': '제곱미터'
 }
 
