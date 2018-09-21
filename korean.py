@@ -1,12 +1,6 @@
 #-*- coding: utf-8 -*-
-import re
-import ast
-from jamo import hangul_to_jamo
-# import nltk
-# nltk.download('punkt')
-from ko_dictionary import *
+
 from patterns import *
-from constant import *
 from normalization_rules import *
 from DictionaryMissException import DictionaryMissException
 

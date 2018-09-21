@@ -1,26 +1,10 @@
 #-*- coding: utf-8 -*-
-
-PAD = '_'
-EOS = '~'
-PUNC = '!\'(),-.:;?'
-SPACE = ' '
-
-JAMO_LEADS = "".join([chr(_) for _ in range(0x1100, 0x1113)])
-JAMO_VOWELS = "".join([chr(_) for _ in range(0x1161, 0x1176)])
-JAMO_TAILS = "".join([chr(_) for _ in range(0x11A8, 0x11C3)])
-
-VALID_CHARS = JAMO_LEADS + JAMO_VOWELS + JAMO_TAILS + PUNC + SPACE
-ALL_SYMBOLS = PAD + EOS + VALID_CHARS
-
-char_to_id = {c: i for i, c in enumerate(ALL_SYMBOLS)}
-id_to_char = {i: c for i, c in enumerate(ALL_SYMBOLS)}
-
 # Constants for number normalization
 num_to_kor1 = [""] + list("일이삼사오육칠팔구")
 num_to_kor2 = [""] + list("만억조경해")
 num_to_kor3 = [""] + list("십백천")
 
-count_to_kor1 = [""] + ["한","두","세","네","다섯","여섯","일곱","여덟","아홉"]
+count_to_kor = [""] + ["한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉"]
 
 num_to_kor = {
         '0': '영',

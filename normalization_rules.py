@@ -41,7 +41,7 @@ def number_to_korean(num_str, is_count=False):
         v = int(v)
         if v != 0:
             if is_count:
-                tmp += count_to_kor1[v]
+                tmp += count_to_kor[v]
             else:
                 tmp += num_to_kor1[v]
             tmp += num_to_kor3[(size - i) % 4] #만 단위로 끊는다
