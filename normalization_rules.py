@@ -12,13 +12,59 @@ def unit_to_korean(str, is_eng=False):
         kor_unit_str = other_unit_dictionary[unit_str]
     return num_str + kor_unit_str
 
+def number_to_korean_no_unit(input_num_str):
+    num_str, unit_str = input_num_str.group(), ""
 
-def number_to_korean(num_str, is_count=False):
-    group_size = len(num_str.groups())
-    if group_size == 1:
-        num_str, unit_str = num_str.group(), ""
-    elif group_size == 2:
-        num_str, unit_str = num_str.group(1), num_str.group(2)
+    num_str = num_str.replace(',', '')
+    num = ast.literal_eval(num_str)
+    if num == 0:
+        return "영"
+    check_float = num_str.split('.')
+    if len(check_float) == 2:
+        digit_str, float_str = check_float
+    elif len(check_float) >= 3:
+        raise Exception(" [!] Wrong number format")
+    else:
+        digit_str, float_str = check_float[0], None
+
+    digit = int(digit_str)
+    if digit_str.startswith("-") or digit_str.startswith("+"):  # remove sign even if it is negative
+        digit, digit_str = abs(digit), str(abs(digit))
+    kor = ""
+    size = len(str(digit))
+    tmp = []
+    for i, v in enumerate(digit_str, start=1):  # i: indx, v: value
+        v = int(v)
+        if v != 0:
+
+            tmp += num_to_kor1[v]
+            tmp += num_to_kor3[(size - i) % 4]  # 만 단위로 끊는다
+        if (size - i) % 4 == 0 and len(tmp) != 0:
+            kor += "".join(tmp)
+            tmp = []
+            kor += num_to_kor2[int((size - i) / 4)]
+
+    if kor.startswith("일") and len(kor) > 1:  # 맨 처음의 1은 읽지 않는다
+        kor = kor[1:]
+    if any(word in kor for word in noncount_tenth_kor):
+        kor = re.sub(
+            '|'.join(noncount_tenth_kor.keys()),
+            lambda x: noncount_tenth_kor[x.group()], kor)
+    # if not is_count and kor.startswith("일") and len(kor) > 1:
+    #    kor = kor[1:]
+    if float_str is not None:
+        if len(kor) == 0:
+            kor += "영"
+        kor += "쩜 "
+        kor += re.sub('\d', lambda x: num_to_kor[x.group()], float_str)
+    if num_str.startswith("+"):
+        kor = "플러스 " + kor
+    elif num_str.startswith("-"):
+        kor = "마이너스 " + kor
+    return kor + unit_str
+
+def number_to_korean(num_str, is_count):
+    num_str, unit_str = num_str.group(1), num_str.group(2)
 
     num_str = num_str.replace(',', '')
     num = ast.literal_eval(num_str)

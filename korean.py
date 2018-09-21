@@ -58,10 +58,8 @@ def normalize_unit(text):
 
 def normalize_number(text):
     text = normalize_with_dictionary(text, etc_dictionary)
-    text = re.sub(number_pattern + noncount_pattern,
-                  lambda x: number_to_korean(x, False), text)
     text = re.sub(number_pattern + count_pattern,
                   lambda x: number_to_korean(x, True), text)
     text = re.sub(number_pattern,
-                  lambda x: number_to_korean(x, False), text)
+                  lambda x: number_to_korean_no_unit(x), text)
     return text
