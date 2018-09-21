@@ -21,7 +21,6 @@ def normalize(text):
     return text
 
 def include_alphabet(text):
-    result = False
     result = re.match('[a-zA-Z]+', text)
     return result
 
@@ -47,11 +46,6 @@ def normalize_dictionary_miss_alphabet(text):
     text = re.sub(alphabet_pattern,
                   lambda x:alphabet_to_korean(x), text);
     return text
-
-def normalize_upper(text):
-    text = text.group(0)
-    text = text.upper()
-    return "".join(upper_to_kor[char] for char in text)
 
 '''
 숫자 뒤에 unit 토큰이 오면 숫자는 냅두고 unit 토큰만 normalize한다.
