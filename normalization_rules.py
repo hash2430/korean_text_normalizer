@@ -127,3 +127,7 @@ def number_to_korean(num_str, is_count):
 def alphabet_to_korean(str):
     text = str.group(0)
     return "".join(upper_to_kor[char] for char in text)
+
+def chinese_to_korean(str):
+    text = str.group(0)
+    return "".join(chinese_dictionary[char] for char in text)

@@ -1,23 +1,10 @@
 from korean import normalize
 
-# print(normalize('300m'))
-# print(normalize('300 m'))
-# print(normalize('my mom'))
-# print(normalize('300 %'))
-print(normalize("kpop"))
-print(normalize('300,000.39 라구요'))
-print(normalize('300,000.39 달러'))
-print(normalize('300,000.39달러'))
-print(normalize('장미 22송이'))
-print(normalize('장미 22 송이'))
-print(normalize('생후 22개월'))
-print(normalize('생후 22 개월'))
-print(normalize('문재인 대통령이 능라도 5·1 체육관에서 15만 군중 앞에서 연설하며 한반도의 비핵화를 완전히 합의했다'))
-print(normalize('서울시, 저층주거지 도시재생 9곳 선정…5년간 600억 투입'))
-print(normalize('주거환경개선사업 후보지는 주민 동의 50%를 확보한 후 구역지정을 완료하면 예산을 지원받아 사업에 착수할 수 있다. 3년간 지역당 20억~40억원이 지원된다.'))
-print(normalize('주거환경개선사업 후보지는 은평구 신사동 184번지 일대 6만694㎡, 성북구 정릉동 894번지 일대 5만5812㎡, 구로구 개봉동 288-7번지 일대 3만6450㎡, 중랑구 면목동 1075번지 일대 1만9000㎡다.'))
-print(normalize('중국 정부도 ‘중국 제조 2025(Made in China 2025)‘ 사업을 통해 첨단산업과 관련 시장 지배 의지를 분명히 했다'))
-print(normalize('영국의 파이낸셜타임스(FT)는 종종 한 면을 털어 심층분석 기사 FT 빅리드(FT BIG READ)를 싣는다.'))
-print(normalize('르펜은 2015년 12월 FN을 IS에 빗대 비판한 방송사 기자에게 IS의 잔혹행위 사진을 보냈다.'))
-print(normalize('SD의 득표율은 2014년 총선 12.9%보다 5%포인트 가까이 올랐다.'))
-print(normalize('우크라이나 경찰은 전날 그가 키예프의 자신의 아파트 입구에서 야구모자를 쓴 40대 괴한의 총에 맞아 병원으로 이송되던 도중 숨졌다고 발표했었다.'))
+# read from test.txt and run normalize()
+file = open('./test.txt', 'r')
+while(True):
+    line = file.readline();
+    outLine = normalize(line);
+    print(outLine)
+    if (not line):
+        break

@@ -10,6 +10,7 @@ def normalize(text):
     text = normalize_number(text)
     text = normalize_english(text)
     text = normalize_dictionary_miss_alphabet(text);
+    text = normalize_chinese(text);
     # if include_alphabet(text) != None:
     #     raise DictionaryMissException(text)
     return text
@@ -41,13 +42,17 @@ def normalize_dictionary_miss_alphabet(text):
                   lambda x:alphabet_to_korean(x), text);
     return text
 
+def normalize_chinese(text):
+    text = re.sub(chinese_pattern,
+                  lambda x:chinese_to_korean(x), text);
+    return text;
+
 '''
 숫자 뒤에 unit 토큰이 오면 숫자는 냅두고 unit 토큰만 normalize한다.
 이렇게 하는 이유는 'm'같은 토큰의 경우 
 alphabet normalize를 number normalize보다 먼저하면 m을 미터로 읽을 방법이 없고
 number normalize를 먼저하고 이 때 알파벳 unit을 normalize를 해버리면 문자열에 필요한 m이었어도 미터로 읽어버린다.
 '''
-
 def normalize_unit(text):
     text = re.sub(number_pattern + eng_unit_pattern,
                   lambda x:unit_to_korean(x, True), text)
