@@ -8,8 +8,8 @@ Korean text normalizer
 # Interface
 + The user only needs to call korean.normalize(text) method.
 # Calling order of normalizers
-+ Once the korean.normalize(text) is called, each normalizers for specific patterns takes part in order. The order of normalizers are very important. If the order is messed up, there is no guratnee this works as expected.
- trim
++ Once the korean.normalize(text) is called, each normalizers for specific patterns takes part in order. The order of normalizers are very important. If the order is messed up, there is no guratee this works as expected.
++ trim()
 + normalize_unit()
 + normalize_number()
 + normalize_english()
