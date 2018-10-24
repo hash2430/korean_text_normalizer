@@ -5,7 +5,14 @@ import re
 
 # 패턴 매치가 일어난 후에 매치된 부위를 한글로 치환하는 함수를 모아둔 모듈
 def unit_to_korean(str, is_eng=False):
-    num_str, unit_str = str.group(1), str.group(2)
+    match = str.group(0)
+    unit_str = str.group(2)
+    check_float = match.split(unit_str)[0].split('.')
+    check_float_len = len(check_float)
+    if (check_float_len == 2):
+        num_str = match.split(unit_str)[0]
+    else:
+        num_str, unit_str = str.group(1), str.group(2)
     if is_eng:
         kor_unit_str = eng_unit_dictionary[unit_str]
     else:
